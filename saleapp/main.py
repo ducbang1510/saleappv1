@@ -1,13 +1,15 @@
 from flask import render_template, request, redirect
-from saleapp import app, utils, admins, login
+from saleapp import create_app, utils, admins, login
 from flask_login import login_user
 from saleapp.models import *
 import hashlib
 
+app = create_app('flask.cfg')
+
 
 @app.route("/")
 def index():
-    categories = utils.read_data()
+    categories = utils.read_category()
     return render_template('index.html',
                            categories=categories)
 
@@ -56,4 +58,5 @@ def load_user(user_id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app = app.run()
+    # app.run(debug=True)

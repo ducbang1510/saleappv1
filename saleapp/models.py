@@ -1,7 +1,8 @@
-from sqlalchemy import Integer, String, Float, Boolean, Column, ForeignKey, or_, and_
-from sqlalchemy.orm import relationship
-from flask_login import UserMixin, current_user, logout_user
-from flask import redirect
+from sqlalchemy import Column, Integer, Float, String, ForeignKey, Boolean, Date, Enum, DateTime
+from sqlalchemy.orm import relationship, backref
+from flask_login import UserMixin
+from datetime import datetime
+from enum import Enum as UserEnum
 from saleapp import db
 
 
@@ -13,14 +14,6 @@ class SaleBase(db.Model):
 
     def __str__(self):
         return self.name
-
-
-class User(SaleBase, UserMixin):
-    __tablename__ = 'user'
-
-    active = Column(Boolean, default=True)
-    username = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
 
 
 class Category(SaleBase):
@@ -36,6 +29,21 @@ class Product(SaleBase):
     price = Column(Float, default=0)
     image = Column(String(255), nullable=True)
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
+
+
+class UserRole(UserEnum):
+    USER = 1
+    ADMIN = 2
+
+
+class User(SaleBase, UserMixin):
+    __tablename__ = 'user'
+
+    email = Column(String(50), nullable=True)
+    username = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
+    active = Column(Boolean, default=True)
+    user_role = Column(Enum(UserRole), default=UserRole.USER)
 
 
 if __name__ == "__main__":
